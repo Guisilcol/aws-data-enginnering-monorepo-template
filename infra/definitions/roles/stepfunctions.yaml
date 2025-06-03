@@ -1,0 +1,18 @@
+description: "Role for EC2 instances needing S3 access."
+assume_role_policy:
+  Version: "2012-10-17"
+  Statement:
+    - Effect: "Allow"
+      Principal: { Service: "states.amazonaws.com" }
+      Action: "sts:AssumeRole"
+
+inline_policies:
+  - name: "S3ReadOnly"
+    policy:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: "Allow"
+          Action: "s3:Get*"
+          Resource: "*"
+tags:
+  RoleType: "EC2"

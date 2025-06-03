@@ -1,0 +1,1 @@
+print('__init__ file in sub_module')
