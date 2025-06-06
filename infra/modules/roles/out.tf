@@ -1,25 +1,11 @@
-output "iam_roles" {
-  description = "A map of the created IAM roles, keyed by their filename-derived names."
-  value = {
-    for role_key, role_object in aws_iam_role.this : role_key => {
-      arn  = role_object.arn
-      id   = role_object.id
-      name = role_object.name
-      # unique_id = role_object.unique_id # another useful attribute
-    }
-  }
+# iam_role_module/outputs.tf
+
+output "created_roles_arn" {
+  description = "Mapa com os ARNs das roles criadas. A chave é o nome da role."
+  value       = { for name, role in aws_iam_role.from_yaml : name => role.arn }
 }
 
-output "iam_role_arns" {
-  description = "A map of IAM role ARNs, keyed by their filename-derived names."
-  value = {
-    for role_key, role_object in aws_iam_role.this : role_key => role_object.arn
-  }
-}
-
-output "iam_role_names" {
-  description = "A map of IAM role names, keyed by their filename-derived names."
-  value = {
-    for role_key, role_object in aws_iam_role.this : role_key => role_object.name
-  }
+output "created_roles_name" {
+  description = "Mapa com os nomes das roles criadas. A chave é o nome da role."
+  value       = { for name, role in aws_iam_role.from_yaml : name => role.name }
 }

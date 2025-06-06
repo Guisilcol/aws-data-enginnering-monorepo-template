@@ -1,18 +1,21 @@
-description: "Role for EC2 instances needing S3 access."
-assume_role_policy:
+Name: "StepFunctionsExecutionRole"
+Description: "Role para AWS Step Functions."
+AssumeRolePolicy:
   Version: "2012-10-17"
   Statement:
     - Effect: "Allow"
       Principal: { Service: "states.amazonaws.com" }
       Action: "sts:AssumeRole"
 
-inline_policies:
-  - name: "S3ReadOnly"
-    policy:
+InlinePolicies:
+  - Name: "LambdaInvoke"
+    PolicyDocument:
       Version: "2012-10-17"
       Statement:
         - Effect: "Allow"
-          Action: "s3:Get*"
+          Action: "lambda:InvokeFunction"
           Resource: "*"
-tags:
-  RoleType: "EC2"
+        
+Tags:
+  ManagedBy: "Terraform"
+  Service: "StepFunctions"
