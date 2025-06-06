@@ -4,24 +4,17 @@ locals {
   # 1. Encontra todos os arquivos .yaml ou .yml no diretório especificado.
   yaml_files = fileset(var.yamls_directory, "**/*.{yaml,yml}")
 
-  # 2. (ETAPA INTERMEDIÁRIA) Lê e processa cada arquivo YAML aplicando as variáveis do template.
-  #    O resultado é uma lista de objetos, cada um representando um arquivo YAML.
-  processed_yamls = [
+  # 2. Cria um mapa onde a chave é o nome da role (derivado do nome do arquivo)
+  #    e o valor é o conteúdo do YAML decodificado após a substituição das variáveis.
+  #    A função `trimsuffix` remove a extensão `.yaml` para obter o nome limpo da role.
+  roles_data = {
     for file_path in local.yaml_files :
-    yamldecode(
+    trimsuffix(basename(file_path), ".yaml") => yamldecode(
       templatefile("${var.yamls_directory}/${file_path}", var.template_variables)
     )
-  ]
-
-  # 3. (ETAPA FINAL) Cria o mapa principal de dados das roles.
-  #    A chave do mapa agora é o valor do campo "Name" de dentro do próprio YAML.
-  #    Isso nos permite usar o nome definido no arquivo para criar e referenciar a role.
-  roles_data = {
-    for config in local.processed_yamls : config.Name => config
   }
 
-  # 4. Cria uma lista "achatada" (flatten) de todas as políticas inline de todas as roles.
-  #    Esta lógica permanece a mesma, mas agora consome `local.roles_data` que usa a nova chave.
+  # 3. Cria uma lista flatten de todas as políticas inline.
   inline_policies = flatten([
     for role_name, role_config in local.roles_data : [
       for policy in lookup(role_config, "InlinePolicies", []) : {
@@ -33,11 +26,11 @@ locals {
   ])
 }
 
-# Cria uma IAM Role para cada configuração de role encontrada.
+# Cria uma IAM Role para cada arquivo YAML encontrado.
 resource "aws_iam_role" "from_yaml" {
   for_each = local.roles_data
 
-  # `each.key` agora contém o valor do campo "Name" do YAML.
+  # `each.key` agora contém o nome do arquivo, que será o nome da role.
   name               = each.key
   description        = lookup(each.value, "Description", "Role criada pelo módulo Terraform.")
   assume_role_policy = jsonencode(each.value.AssumeRolePolicy)
@@ -49,8 +42,7 @@ resource "aws_iam_role_policy" "inline" {
   for_each = { for policy in local.inline_policies : "${policy.role_name}.${policy.policy_name}" => policy }
 
   name   = each.value.policy_name
-  # A referência `aws_iam_role.from_yaml[each.value.role_name]` continua funcionando
-  # porque `each.value.role_name` agora corresponde à chave correta (`Name` do YAML).
+  # A referência continua funcionando, pois `each.value.role_name` corresponde ao nome do arquivo.
   role   = aws_iam_role.from_yaml[each.value.role_name].id
   policy = jsonencode(each.value.policy_document)
 }

@@ -1,4 +1,3 @@
-Name: "StepFunctionsExecutionRole"
 Description: "Role para AWS Step Functions."
 AssumeRolePolicy:
   Version: "2012-10-17"
