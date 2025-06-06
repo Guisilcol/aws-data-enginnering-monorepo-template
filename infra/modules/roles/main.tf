@@ -8,7 +8,7 @@ locals {
   roles_data = {
     for file_path in local.yaml_files :
     trimsuffix(basename(file_path), ".yaml") => yamldecode(
-      templatefile("${var.yamls_directory}/${file_path}", var.template_variables)
+      templatefile("${var.yamls_directory}/${file_path}", var.template_values)
     )
   }
 

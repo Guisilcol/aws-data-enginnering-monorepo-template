@@ -1,5 +1,5 @@
 module "iam_roles" {
   source = "./modules/roles"
   yamls_directory = "./definitions/roles"
-  template_variables = {}
+  template_values = var.template_values
 }
