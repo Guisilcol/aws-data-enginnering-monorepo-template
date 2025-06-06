@@ -1,5 +1,3 @@
-# iam_role_module/main.tf
-
 locals {
   # 1. Encontra todos os arquivos .yaml ou .yml no diretório especificado.
   yaml_files = fileset(var.yamls_directory, "**/*.{yaml,yml}")
