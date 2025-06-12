@@ -10,4 +10,14 @@ install-shared:
 	@echo "Removing egg and egg-info files..."
 	@rm -rf $(SHARED_MODULE_DIR)/*.egg $(SHARED_MODULE_DIR)/*.egg-info
 
-.PHONY: install-shared
+build:
+	@echo "Building Glue..."
+	bash ./cicd/build-glue.sh
+	@echo "Building Lambda"
+	bash ./cicd/build-lambda.sh
+	@echo "Building shared module"
+	bash ./cicd/build-shared.sh
+	@echo "Building Step Functions"
+	bash ./cicd/build-stepfunctions.sh
+
+.PHONY: install-shared build
