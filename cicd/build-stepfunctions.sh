@@ -56,7 +56,7 @@ else
     log_info "${file_count} arquivo(s) de definição foram preparados com sucesso."
 fi
 
-log_info "Preparação das Step Functions concluída! ✅"
+log_info "Preparação das Step Functions concluída!"
 log_info "Definições prontas para deploy em: ${SFN_DIST_DIR}"
 
 exit 0

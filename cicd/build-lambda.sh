@@ -75,7 +75,7 @@ build_lambda() {
   # 6. Limpar diretório de build temporário
   rm -rf "$build_dir_temp"
 
-  log_info "--- Build da Lambda '${lambda_name}' concluído com sucesso! ✅ ---"
+  log_info "--- Build da Lambda '${lambda_name}' concluído com sucesso! ---"
 }
 
 

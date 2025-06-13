@@ -98,7 +98,7 @@ if ! $TERRAFORM_CMD apply -var-file="$VAR_FILE" -auto-approve; then
 fi
 
 log_info "Terraform apply completed successfully for environment '$TARGET_ENV'."
-log_info "Infrastructure deployment for '$TARGET_ENV' using profile '$AWS_PROFILE_NAME' from './${INFRA_DIR}' is complete. ✅"
+log_info "Infrastructure deployment for '$TARGET_ENV' using profile '$AWS_PROFILE_NAME' from './${INFRA_DIR}' is complete."
 
 # Optional: Change back to the original directory if needed for subsequent script operations
 # cd .. 

@@ -58,7 +58,7 @@ else
 fi
 
 
-log_info "Preparação dos scripts do Glue concluída! ✅"
+log_info "Preparação dos scripts do Glue concluída!"
 log_info "Scripts prontos para deploy em: ${GLUE_DIST_DIR}"
 
 exit 0

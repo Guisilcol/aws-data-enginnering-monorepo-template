@@ -86,7 +86,7 @@ mv "${SHARED_SRC_DIR}/dist/"*.whl "${DIST_DIR}/"
 
 # Informa o nome do arquivo gerado
 WHEEL_FILE_NAME=$(basename "${DIST_DIR}"/*.whl)
-log_info "Arquivo wheel '${WHEEL_FILE_NAME}' criado com sucesso! ✅"
+log_info "Arquivo wheel '${WHEEL_FILE_NAME}' criado com sucesso!"
 
 # Limpa os diretórios temporários criados pelo processo de build do wheel
 rm -rf "${SHARED_SRC_DIR}/dist" "${SHARED_SRC_DIR}/build" "${SHARED_SRC_DIR}"/*.egg-info
@@ -126,7 +126,7 @@ if ! zip -r "${CURRENT_DIR}/${ZIP_FILE_PATH}" .; then
 fi
 cd "$CURRENT_DIR"
 
-log_info "Arquivo zip '${ZIP_FILE_NAME}' criado com sucesso! ✅"
+log_info "Arquivo zip '${ZIP_FILE_NAME}' criado com sucesso!"
 
 
 # --- Conclusão ---
