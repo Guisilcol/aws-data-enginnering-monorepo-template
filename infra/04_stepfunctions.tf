@@ -1,5 +1,6 @@
 module "step_functions" {
   source = "./modules/stepfunctions"
-  yamls_directory = "./definitions/stepfunctions"
-  template_variables = {}
+
+  definitions_directory = "${path.module}/definitions/stepfunctions"
+  role_arn              = module.master_role.role_arn
 }

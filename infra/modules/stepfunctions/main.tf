@@ -1,60 +1,62 @@
-# main.tf
+# modules/step_functions/main.tf
 
-data "aws_partition" "current" {}
-data "aws_caller_identity" "current" {}
-
+# Find all YAML files in the specified directory and parse their content.
 locals {
-  yaml_files = fileset(var.yamls_directory, "**/*.{yaml,yml}")
+  definition_files = fileset(var.definitions_directory, "**/*.yaml")
 
-  # Process each YAML file with a two-step template approach.
-  state_machines = {
-    for file_path in local.yaml_files :
-    trimsuffix(basename(file_path), ".yaml") => {
-      # --- UPDATED LOGIC ---
-      # 1. The YAML file itself is rendered using the module's input variables.
-      # 2. The resulting YAML string is then decoded.
-      config = yamldecode(templatefile("${var.yamls_directory}/${file_path}", var.template_variables))
-      
-      source_path = file_path
-    }
+  step_functions = {
+    for file in local.definition_files :
+    trimsuffix(file, ".yaml") => yamldecode(file("${var.definitions_directory}/${file}"))
   }
 }
 
+# Create the AWS Step Function state machine for each definition found.
 resource "aws_sfn_state_machine" "this" {
-  for_each = local.state_machines
+  for_each = local.step_functions
 
-  name     = each.key
-  role_arn = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/${each.value.config.RoleName}"
+  name       = each.value.name
+  role_arn   = var.role_arn
+  definition = file("${abspath(var.definitions_directory)}/${each.value.definition_path}")
 
-  # --- UPDATED LOGIC ---
-  # The definition now uses the 'DefinitionVariables' map from the rendered YAML.
-  definition = templatefile("${var.yamls_directory}/${each.value.config.DefinitionPath}", merge(
-      # Use variables from the new `DefinitionVariables` block in the YAML.
-      # The try() function provides an empty map if the block is omitted, preventing errors.
-      try(each.value.config.DefinitionVariables, {}),
-      
-      # We still automatically inject the Comment for convenience.
-      {
-        Comment = try(each.value.config.Comment, "State machine for ${each.key}")
-      }
-    )
-  )
-
-  logging_configuration {
-    log_destination        = try(each.value.config.LoggingConfiguration.Level, "OFF") != "OFF" ? aws_cloudwatch_log_group.this[each.key].arn : null
-    include_execution_data = try(each.value.config.LoggingConfiguration.IncludeExecutionData, false)
-    level                  = try(each.value.config.LoggingConfiguration.Level, "OFF")
+  tags = {
+    Name = each.value.name
   }
-
-  tracing_configuration {
-    enabled = try(each.value.config.TracingConfiguration.Enabled, false)
-  }
-
-  # The `try` function here is robust enough to handle templated tags.
-  tags = try(each.value.config.Tags, {})
-
-  depends_on = [aws_cloudwatch_log_group.this]
 }
 
-# The rest of the file (log group, event rule, event target) remains unchanged.
-# ... (aws_cloudwatch_log_group, aws_cloudwatch_event_rule, aws_cloudwatch_event_target) ...
+# Create a CloudWatch Event Rule for Step Functions triggered by a CRON schedule.
+resource "aws_cloudwatch_event_rule" "scheduled" {
+  for_each = {
+    for key, value in local.step_functions : key => value
+    if lookup(value, "schedule_expression", null) != null
+  }
+
+  name                = "${each.value.name}-schedule-rule"
+  schedule_expression = each.value.schedule_expression
+}
+
+# Create a target to link the scheduled rule to the corresponding Step Function.
+resource "aws_cloudwatch_event_target" "scheduled" {
+  for_each = aws_cloudwatch_event_rule.scheduled
+
+  rule = each.value.name
+  arn  = aws_sfn_state_machine.this[each.key].arn
+}
+
+# Create a CloudWatch Event Rule for Step Functions triggered by an event pattern.
+resource "aws_cloudwatch_event_rule" "event_driven" {
+  for_each = {
+    for key, value in local.step_functions : key => value
+    if lookup(value, "event_pattern", null) != null
+  }
+
+  name          = "${each.value.name}-event-rule"
+  event_pattern = each.value.event_pattern
+}
+
+# Create a target to link the event-driven rule to the corresponding Step Function.
+resource "aws_cloudwatch_event_target" "event_driven" {
+  for_each = aws_cloudwatch_event_rule.event_driven
+
+  rule = each.value.name
+  arn  = aws_sfn_state_machine.this[each.key].arn
+}

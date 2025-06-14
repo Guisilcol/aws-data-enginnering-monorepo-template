@@ -1,0 +1,14 @@
+Description: |
+  This is a sample Glue job definition for a Spark job.
+  It includes the necessary configurations and parameters.
+
+SourceCodeFolder: "build/glue_jobs/spark_job"
+Type: "glueetl"
+DPU: 2
+MaxCapacity: NULL
+MaxRetries: 3
+MaxConcurrentRuns: 5
+WorkerType: "G.1X"
+GlueVersion: "3.0"
+DefaultArguments: {}
+

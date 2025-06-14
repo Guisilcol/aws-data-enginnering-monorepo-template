@@ -1,12 +1,11 @@
-# variables.tf
+# modules/step_functions/variables.tf
 
-variable "yamls_directory" {
+variable "definitions_directory" {
   type        = string
-  description = "The path to the directory containing the State Machine .yaml configuration files. The path should be relative to where you run terraform."
+  description = "The directory path containing the Step Function definition YAML files."
 }
 
-variable "template_variables" {
-  type        = map(any)
-  description = "A map of values to be substituted into the state machine definition JSON files via the templatefile() function."
-  default     = {}
+variable "role_arn" {
+  type        = string
+  description = "The ARN of the IAM role to be assigned to the Step Functions."
 }
