@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"buckets","Source":"./modules/buckets","Dir":""},{"Key":"iam_roles","Source":"./modules/roles","Dir":"modules/roles"},{"Key":"step_functions","Source":"./modules/stepfunctions","Dir":"modules/stepfunctions"}]}
