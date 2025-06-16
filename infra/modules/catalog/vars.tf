@@ -1,5 +1,3 @@
-# /modules/tf-aws-glue-catalog/variables.tf
-
 variable "database_name" {
   type        = string
   description = "The name of the Glue Catalog database to be created."

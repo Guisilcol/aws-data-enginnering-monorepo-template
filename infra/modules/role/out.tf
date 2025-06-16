@@ -1,5 +1,3 @@
-# outputs.tf
-
 # The Amazon Resource Name (ARN) of the role.
 output "role_arn" {
   description = "The ARN of the created IAM role."

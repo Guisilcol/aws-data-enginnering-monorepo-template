@@ -1,5 +1,3 @@
-# modules/step_functions/main.tf
-
 # Find all YAML files in the specified directory and parse their content.
 locals {
   definition_files = fileset(var.definitions_directory, "**/*.yaml")

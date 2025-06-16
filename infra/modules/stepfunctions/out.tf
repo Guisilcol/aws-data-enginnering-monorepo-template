@@ -1,5 +1,3 @@
-# modules/step_functions/outputs.tf
-
 output "step_function_arns" {
   description = "A map of the ARNs of the created Step Functions."
   value       = { for key, sfn in aws_sfn_state_machine.this : key => sfn.arn }

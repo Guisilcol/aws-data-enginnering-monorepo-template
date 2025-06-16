@@ -1,5 +1,3 @@
-# modules/step_functions/variables.tf
-
 variable "definitions_directory" {
   type        = string
   description = "The directory path containing the Step Function definition YAML files."

@@ -1,5 +1,3 @@
-# variables.tf
-
 # The desired name for the IAM Role.
 variable "role_name" {
   description = "The name of the IAM role."

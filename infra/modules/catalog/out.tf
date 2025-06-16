@@ -1,5 +1,3 @@
-# /modules/tf-aws-glue-catalog/outputs.tf
-
 output "database_name" {
   description = "The name of the created Glue database."
   value       = aws_glue_catalog_database.this.name
