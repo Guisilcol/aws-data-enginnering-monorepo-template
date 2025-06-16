@@ -6,6 +6,12 @@ variable "region" {
   
 }
 
+variable "aws_cli_profile" {
+    description = "AWS CLI profile to use for deployment"
+    type        = string
+    default     = "default"
+}
+
 variable "template_values" {
     description = "Template values for the infrastructure modules"
     type        = map(string)

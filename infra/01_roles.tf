@@ -1,7 +1,7 @@
 module "master_role" {
   source = "./modules/role"
 
-  role_name = "ec2-s3-reader-role"
+  role_name = "master-role"
 
   assume_role_policy_json = jsonencode({
     Version   = "2012-10-17"

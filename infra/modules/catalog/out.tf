@@ -5,7 +5,13 @@ output "database_name" {
   value       = aws_glue_catalog_database.this.name
 }
 
-output "table_names" {
+output "iceberg_tables" {
   description = "A list of names of the created Glue tables."
-  value       = [for table in aws_glue_catalog_table.this : table.name]
+  value       = [for table in aws_glue_catalog_table.iceberg : table.name]
+}
+
+output "external_tables" {
+  description = "A list of names of the created Glue external tables."
+  value       = [for table in aws_glue_catalog_table.external : table.name]
+  
 }
